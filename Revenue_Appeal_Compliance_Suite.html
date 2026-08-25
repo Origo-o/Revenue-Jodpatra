@@ -1,0 +1,889 @@
+<!DOCTYPE html>
+<html lang="mr">
+<head>
+<meta charset="UTF-8" />
+<meta name="viewport" content="width=device-width, initial-scale=1.0" />
+<title>राजस्व अपील कंप्लायन्स · Compliance Suite</title>
+<style>
+  :root{
+    --bg:#eef2f8; --card:#fff; --ink:#1c2536; --muted:#64708a;
+    --brand:#1f4f8b; --brand2:#2c6cc0; --green:#1f8a4c; --red:#c0392b;
+    --amber:#b7791f; --line:#e2e8f3; --soft:#eef2fa;
+  }
+  *{box-sizing:border-box;}
+  html,body{margin:0;padding:0;}
+  body{font-family:"Noto Sans","Noto Sans Devanagari","Nirmala UI","Mangal",Arial,sans-serif;
+    background:var(--bg);color:var(--ink);font-size:15px;line-height:1.45;-webkit-font-smoothing:antialiased;}
+  header.appbar{background:linear-gradient(120deg,#15335f,#245a95 60%,#2c6cc0);color:#fff;
+    padding:14px 20px;box-shadow:0 2px 10px rgba(0,0,0,.12);}
+  header.appbar .wrap{max-width:1000px;margin:0 auto;display:flex;flex-wrap:wrap;gap:10px;
+    align-items:center;justify-content:space-between;}
+  header.appbar h1{margin:0;font-size:18px;font-weight:700;}
+  header.appbar .sub{font-size:12.5px;opacity:.85;margin-top:2px;}
+  header.appbar .meta{font-size:12.5px;opacity:.92;text-align:right;line-height:1.5;}
+  .wrap{max-width:1000px;margin:0 auto;padding:18px 20px 70px;}
+  nav.tabs{display:flex;flex-wrap:wrap;gap:6px;margin:0 0 16px;background:var(--card);
+    padding:7px;border-radius:12px;border:1px solid var(--line);position:sticky;top:0;z-index:40;box-shadow:0 2px 8px rgba(0,0,0,.04);}
+  nav.tabs button{border:none;background:transparent;color:var(--muted);padding:9px 16px;border-radius:9px;
+    font-weight:700;font-size:14px;cursor:pointer;font-family:inherit;transition:.15s;}
+  nav.tabs button:hover{background:var(--soft);color:var(--brand);}
+  nav.tabs button.active{background:var(--brand);color:#fff;box-shadow:0 2px 6px rgba(31,79,139,.3);}
+  nav.tabs button .dot{display:inline-block;width:8px;height:8px;border-radius:50%;margin-left:6px;vertical-align:middle;}
+  .card{background:var(--card);border:1px solid var(--line);border-radius:14px;padding:16px 18px;margin-bottom:16px;box-shadow:0 1px 4px rgba(0,0,0,.03);}
+  .card h2{margin:0 0 4px;font-size:17px;}
+  .card .hint{color:var(--muted);font-size:12.5px;margin:0 0 12px;}
+  .grid{display:grid;gap:14px;} .g2{grid-template-columns:repeat(2,1fr);}
+  .g3{grid-template-columns:repeat(3,1fr);} .g4{grid-template-columns:repeat(4,1fr);}
+  @media(max-width:820px){.g2,.g3,.g4{grid-template-columns:1fr;}}
+  label{display:block;font-size:12px;font-weight:700;color:var(--muted);margin:0 0 4px;}
+  input,select,textarea{width:100%;border:1px solid var(--line);border-radius:9px;padding:8px 10px;font-size:14px;
+    font-family:inherit;background:#fff;color:var(--ink);transition:.15s;}
+  input:focus,select:focus,textarea:focus{outline:none;border-color:var(--brand2);box-shadow:0 0 0 3px rgba(44,108,192,.15);}
+  textarea{resize:vertical;min-height:56px;}
+  .row{display:flex;flex-wrap:wrap;gap:10px;align-items:flex-end;}
+  .row > div{flex:1 1 140px;}
+  button.btn{border:none;border-radius:9px;padding:9px 14px;font-weight:700;cursor:pointer;font-family:inherit;
+    font-size:13px;background:var(--brand);color:#fff;transition:.15s;white-space:nowrap;}
+  button.btn:hover{background:var(--brand2);}
+  button.btn.ghost{background:var(--soft);color:var(--brand);border:1px solid var(--line);}
+  button.btn.ghost:hover{background:#e0e7f5;}
+  button.btn.green{background:var(--green);} button.btn.green:hover{background:#17763f;}
+  button.btn.red{background:var(--red);} button.btn.red:hover{background:#a22f22;}
+  button.btn.wa{background:#27ae60;} button.btn.wa:hover{background:#1e9b54;}
+  button.btn.sm{padding:6px 10px;font-size:12px;border-radius:7px;}
+  button.btn.xs{padding:3px 7px;font-size:11px;border-radius:6px;}
+  .pill{display:inline-block;padding:3px 9px;border-radius:999px;font-size:11.5px;font-weight:700;cursor:pointer;}
+  .pill.pending{background:#fdecec;color:var(--red);} .pill.settled{background:#e7f6ee;color:var(--green);}
+  .pill.partial{background:#fdf3e1;color:var(--amber);}
+  table{width:100%;border-collapse:collapse;font-size:13.5px;}
+  th,td{padding:8px 9px;text-align:left;border-bottom:1px solid var(--line);vertical-align:middle;}
+  th{color:var(--muted);font-weight:700;font-size:11.5px;text-transform:uppercase;letter-spacing:.3px;background:var(--soft);}
+  td.num,th.num{text-align:right;} tr:hover td{background:#fafbff;}
+  .empty{text-align:center;color:var(--muted);padding:26px 10px;font-size:14px;}
+  .muted{color:var(--muted);} .num{font-variant-numeric:tabular-nums;}
+  .stat .v{font-size:22px;font-weight:800;} .stat .l{font-size:11.5px;color:var(--muted);font-weight:700;}
+  .foot{margin-top:24px;text-align:center;color:var(--muted);font-size:12px;}
+  .toast{position:fixed;bottom:20px;left:50%;transform:translateX(-50%) translateY(30px);background:var(--ink);color:#fff;
+    padding:11px 18px;border-radius:10px;font-size:13px;opacity:0;transition:.25s;z-index:1000;box-shadow:0 4px 16px rgba(0,0,0,.25);}
+  .toast.show{opacity:1;transform:translateX(-50%) translateY(0);}
+  .danger{color:var(--red);} .ok{color:var(--green);} .hint2{font-size:11.5px;color:var(--muted);margin-top:2px;}
+  .searchbox{display:flex;gap:8px;align-items:center;background:#fff;border:1px solid var(--line);border-radius:10px;padding:3px 6px 3px 12px;}
+  .searchbox input{border:none;background:transparent;box-shadow:none;} .searchbox input:focus{box-shadow:none;border:none;}
+  .stepper{display:inline-flex;align-items:center;gap:4px;border:1px solid var(--line);border-radius:8px;padding:2px;}
+  .stepper button{border:none;background:var(--soft);width:26px;height:26px;border-radius:6px;cursor:pointer;font-size:15px;line-height:1;color:var(--brand);font-weight:700;}
+  .stepper button:hover{background:#dfe6f4;}
+  .stepper input{width:46px;border:none;text-align:center;border-radius:6px;background:#fff;font-size:13.5px;padding:4px 0;}
+  .stepper input:focus{box-shadow:none;border:none;background:var(--soft);}
+
+  /* forms */
+  .formdoc{background:#fff;color:#000;border:1px solid #999;padding:20px 26px;max-width:790px;margin:0 auto;}
+  .formdoc .dochead{text-align:center;border-bottom:2px solid #000;padding-bottom:8px;margin-bottom:12px;}
+  .formdoc .dochead .t1{font-size:20px;font-weight:700;} .formdoc .dochead .t2{font-size:13.5px;font-weight:600;margin-top:3px;}
+  .formdoc .dochead .t3{font-size:12px;margin-top:4px;}
+  .formdoc ol{margin:8px 0 0 22px;padding:0;} .formdoc li{margin-bottom:11px;font-size:13.5px;}
+  .fill{display:inline-block;border:none;border-bottom:1.4px solid #333;background:transparent;font-family:inherit;font-size:13.5px;padding:1px 4px;min-width:60px;height:23px;border-radius:0;}
+  .fill:focus{outline:none;box-shadow:none;border-bottom:2px solid var(--brand);}
+  .fill.w10{width:10%;}.fill.w12{width:12%;}.fill.w20{width:20%;}.fill.w30{width:30%;}.fill.w45{width:45%;}.fill.w60{width:60%;}.fill.w75{width:75%;}.fill.w90{width:90%;}
+  .formdoc .sigrow{display:flex;justify-content:space-between;gap:18px;margin-top:20px;} .formdoc .sigrow .blk{min-width:0;flex:1;}
+  .nodim{border:none;background:transparent;box-shadow:none;width:100%;padding:2px 4px;font-family:inherit;font-size:13px;}
+  .formdoc table.filltbl{width:100%;border-collapse:collapse;margin-top:8px;}
+  .formdoc table.filltbl th,.formdoc table.filltbl td{border:1px solid #333;padding:5px;font-size:12px;}
+  .formdoc table.filltbl td .fill{width:100%;border:none;border-bottom:1px solid #333;}
+  .yn{display:inline-flex;gap:5px;align-items:center;font-size:12.5px;margin-left:5px;}
+  .yn label{cursor:pointer;display:inline-flex;gap:3px;align-items:center;font-size:11.5px;font-weight:600;color:#000;}
+  .yn input{width:auto;margin:0;}
+  .para{font-size:13.5px;text-align:justify;}
+
+  #printArea{display:none;}
+  @media print{
+    @page{size:A4;margin:11mm;}
+    body{background:#fff;} body > *:not(#printArea){display:none !important;}
+    #printArea{display:block !important;color:#000;}
+    #printArea .preceipt{font-size:13px;color:#000;}
+    #printArea .preceipt table{width:100%;border-collapse:collapse;font-size:12.5px;}
+    #printArea .preceipt th,#printArea .preceipt td{border:1px solid #000;padding:5px 7px;}
+    #printArea .preceipt th{background:#eee !important;color:#000;}
+    #printArea .formdoc{border:1px solid #000;max-width:100%;padding:7mm 5mm;box-shadow:none;}
+  }
+
+  /* ==================== APP-LIKE RESPONSIVE UI ==================== */
+  :root{--app-radius:16px;--nav-height:72px;--safe-bottom:env(safe-area-inset-bottom,0px);}
+  body{min-height:100vh;background:linear-gradient(135deg,#eef3fa 0%,#f7f9fc 55%,#edf2f8 100%);}
+  header.appbar{position:sticky;top:0;z-index:60;padding:14px max(20px,calc((100vw - 1180px)/2 + 20px));}
+  header.appbar .wrap{max-width:1180px;padding:0;}
+  .wrap{max-width:1180px;padding:22px 24px 82px;}
+  nav.tabs{max-width:760px;margin:0 auto 20px;justify-content:center;backdrop-filter:blur(14px);}
+  nav.tabs button{min-height:40px;}
+  .card{border-radius:var(--app-radius);padding:20px 22px;margin-bottom:18px;box-shadow:0 4px 18px rgba(25,48,84,.055);}
+  .card h2{font-size:18px;letter-spacing:-.1px;}
+  button.btn{min-height:40px;box-shadow:0 1px 2px rgba(0,0,0,.06);}
+  input,select,textarea{min-height:40px;}
+  .stat{padding:4px 2px;}
+  .stat .v{font-size:25px;}
+  .card:has(table){overflow-x:auto;}
+  .card:has(table)>table{min-width:680px;}
+  .formdoc{border-radius:10px;box-shadow:0 2px 12px rgba(0,0,0,.05);}
+
+  @media (min-width:821px){
+    #main{display:grid;grid-template-columns:repeat(12,minmax(0,1fr));gap:0 18px;}
+    #main>.card{grid-column:span 12;}
+    #main>.card:first-child{grid-column:span 12;}
+    #main>.card:nth-child(2){grid-column:span 12;}
+    body{font-size:15.5px;}
+  }
+
+  @media (max-width:820px){
+    :root{--nav-height:68px;}
+    body{font-size:15px;padding-bottom:calc(var(--nav-height) + var(--safe-bottom));}
+    header.appbar{position:relative;padding:13px 16px 14px;border-radius:0 0 18px 18px;}
+    header.appbar .wrap{gap:6px;align-items:flex-start;}
+    header.appbar h1{font-size:16px;line-height:1.25;padding-right:8px;}
+    header.appbar .sub{font-size:11px;line-height:1.35;margin-top:4px;}
+    header.appbar .meta{font-size:10.5px;line-height:1.35;max-width:110px;}
+    .wrap{padding:12px 12px 18px;}
+    nav.tabs{position:fixed;left:10px;right:10px;bottom:calc(10px + var(--safe-bottom));width:auto;max-width:none;margin:0;padding:7px;gap:5px;border-radius:20px;border:1px solid rgba(180,194,216,.8);background:rgba(255,255,255,.94);box-shadow:0 8px 28px rgba(22,45,78,.2);}
+    nav.tabs button{flex:1;min-height:52px;padding:7px 4px;font-size:11px;line-height:1.2;border-radius:14px;}
+    nav.tabs button.active{box-shadow:none;}
+    nav.tabs button .dot{width:7px;height:7px;margin-left:3px;}
+    .card{padding:16px 14px;margin-bottom:12px;border-radius:16px;}
+    .card h2{font-size:16px;}
+    .grid.g2,.grid.g3,.grid.g4{grid-template-columns:1fr;gap:11px;}
+    .row{gap:8px;}
+    .row>div{flex:1 1 100%;}
+    label{font-size:11.5px;margin-bottom:5px;}
+    input,select,textarea{min-height:44px;padding:10px 11px;border-radius:11px;font-size:16px;}
+    button.btn{min-height:44px;padding:10px 13px;border-radius:11px;font-size:13px;}
+    button.btn.sm{min-height:40px;padding:8px 10px;}
+    button.btn.xs{min-height:32px;padding:5px 8px;}
+    .stat{padding:6px 4px;border-bottom:1px solid var(--line);}
+    .stat .v{font-size:23px;}
+    .stat .l{font-size:10.5px;}
+    .searchbox{min-height:44px;padding-left:10px;border-radius:11px;}
+    .searchbox input{min-height:36px;}
+    .card:has(table){overflow-x:auto;-webkit-overflow-scrolling:touch;}
+    .card:has(table)>table{min-width:720px;}
+    .card:has(table)>.row{min-width:0;}
+    .card:has(table)>.row .searchbox{flex:1 1 100%!important;}
+    .formdoc{padding:16px 14px;min-width:0;overflow-x:auto;border-radius:8px;}
+    .formdoc .dochead .t1{font-size:17px;}
+    .formdoc .dochead .t2{font-size:12px;}
+    .formdoc .dochead .t3{font-size:11px;line-height:2.5;}
+    .formdoc li,.para{font-size:13px;}
+    .formdoc .sigrow{gap:12px;flex-direction:column;}
+    .formdoc table.filltbl{min-width:560px;}
+    #main>.card:first-child .grid.g4{grid-template-columns:repeat(2,minmax(0,1fr));gap:8px 12px;}
+    #main>.card:first-child .stat:nth-child(4){grid-column:span 2;}
+    #main>.card:nth-child(2) .grid.g4{grid-template-columns:1fr 1fr;gap:10px;}
+    #main>.card:nth-child(2) .grid.g4>div:first-child{grid-column:span 2;}
+    #main>.card:nth-child(2) .grid.g4>div:nth-child(4),#main>.card:nth-child(2) .grid.g4>div:nth-child(5),#main>.card:nth-child(2) .grid.g4>div:nth-child(6),#main>.card:nth-child(2) .grid.g4>div:nth-child(7),#main>.card:nth-child(2) .grid.g4>div:nth-child(8){grid-column:span 2;}
+    #main>.card:nth-child(2) .btn{width:100%;}
+    .foot{font-size:11px;padding:0 12px 8px;}
+    .toast{bottom:calc(var(--nav-height) + 22px + var(--safe-bottom));max-width:calc(100vw - 32px);text-align:center;}
+  }
+
+  @media (max-width:380px){
+    header.appbar h1{font-size:14px;}
+    header.appbar .meta{max-width:92px;font-size:9.5px;}
+    .wrap{padding-left:9px;padding-right:9px;}
+    nav.tabs{left:6px;right:6px;}
+    nav.tabs button{font-size:10px;padding-left:2px;padding-right:2px;}
+  }
+
+</style>
+</head>
+<body>
+<header class="appbar">
+  <div class="wrap">
+    <div>
+      <h1>राजस्व अपील कंप्लायन्स · Compliance Suite</h1>
+      <div class="sub" id="appbarSub">Billing · Clients · WhatsApp share · Backup · Official forms</div>
+    </div>
+    <div class="meta" id="appbarMeta"></div>
+  </div>
+</header>
+
+<div class="wrap">
+  <nav class="tabs" id="tabs"></nav>
+  <div id="main"></div>
+  <div class="foot">Data saves on this device. Use सेटिंग्ज → Backup for JSON / CSV / PDF copies.</div>
+</div>
+<div id="printArea"></div>
+<div class="toast" id="toast"></div>
+
+<script>
+/* ==================== STATE ==================== */
+const LS_KEY='revenue_appeal_compliance_v2';
+function defaultItems(){
+  return [
+    {id:'files',cat:'Filing',name:'Two Files / Foldable Files',marathi:'फाईल (फोल्डेबल)',unit:'नग',qty:2,price:70,active:true},
+    {id:'xerox',cat:'Filing',name:'Xerox Set',marathi:'झेरॉक्स सेट',unit:'सेट',qty:1,price:150,active:true},
+    {id:'annx',cat:'जोडपत्र',name:'Annexure / जोडपत्र (Photocopy)',marathi:'जोडपत्र / परिशिष्ट',unit:'प्रत',qty:1,price:100,active:true},
+    {id:'jp2',cat:'जोडपत्र',name:'जोडपत्र-२ (सत्यापन नमुना)',marathi:'जोडपत्र-२·सत्यापन',unit:'प्रत',qty:1,price:300,active:true},
+    {id:'jp3',cat:'जोडपत्र',name:'जोडपत्र-३ (शपथपत्र)',marathi:'जोडपत्र-३·शपथपत्र',unit:'प्रत',qty:1,price:300,active:true},
+    {id:'jp4',cat:'जोडपत्र',name:'जोडपत्र-४ (फेरफार तपशील)',marathi:'जोडपत्र-४·फेरफार',unit:'प्रत',qty:1,price:100,active:true},
+    {id:'env',cat:'टपाल',name:'Envelope / आवरण',marathi:'लिफाफा / आवरण',unit:'नग',qty:1,price:10,active:true},
+    {id:'ack',cat:'टपाल',name:'Acknowledgement / पावती',marathi:'पावती',unit:'नग',qty:1,price:2,active:true},
+    {id:'courtfee',cat:'शुल्क',name:'Court Fee / कोर्ट फी',marathi:'कोर्ट फी (न्याय शुल्क)',unit:'नग',qty:1,price:5,active:true},
+    {id:'stamp',cat:'टपाल',name:'Post Stamps / पोस्ट स्टॅम्प',marathi:'पोस्ट स्टॅम्प',unit:'नग',qty:1,price:80,active:true},
+    {id:'trav',cat:'इतर',name:'Travelling Charges / वाहतूक खर्च',marathi:'वाहतूक खर्च',unit:'वेळा',qty:1,price:150,active:true},
+    {id:'sac',cat:'इतर',name:'SAC / Miscellaneous',marathi:'अन्य / SAC खर्च',unit:'एकूण',qty:1,price:300,active:true}
+  ];
+}
+function defaultState(){
+  return {
+    settings:{officeName:'',filerName:'',address:'',taluka:'',district:'',phone:'',currency:'₹'},
+    items:defaultItems(), clients:[],
+    formData:{}, seq:1
+  };
+}
+let state=loadState();
+let activeTab='home';
+let curClientId=null;
+let formClient='draft', curForm='chhani';
+
+function loadState(){
+  try{ const raw=localStorage.getItem(LS_KEY);
+    if(raw){ const s=JSON.parse(raw); s.settings=Object.assign(defaultState().settings,s.settings||{}); return s; } }catch(e){}
+  return defaultState();
+}
+function save(){ try{ localStorage.setItem(LS_KEY,JSON.stringify(state)); }catch(e){} }
+function uid(p){ return (p||'')+Date.now().toString(36)+Math.random().toString(36).slice(2,7); }
+function fmt(n){ return (state.settings.currency||'₹')+ (+n||0).toLocaleString('en-IN'); }
+function fmtDate(d){ if(!d)return''; const dt=new Date(d); return isNaN(dt)?d:dt.toLocaleDateString('en-GB'); }
+function todayISO(){ return new Date().toISOString().slice(0,10); }
+function todayReadable(){ const d=new Date(); return d.toLocaleDateString('en-GB',{weekday:'short',day:'2-digit',month:'short',year:'numeric'}); }
+function esc(s){ return (s==null?'':String(s)).replace(/&/g,'&amp;').replace(/</g,'&lt;').replace(/>/g,'&gt;').replace(/"/g,'&quot;'); }
+function toast(m){ const t=document.getElementById('toast'); t.textContent=m; t.classList.add('show'); clearTimeout(t._h); t._h=setTimeout(()=>t.classList.remove('show'),2300); }
+function findItem(id){ return state.items.find(i=>i.id===id); }
+function getClient(id){ return state.clients.find(c=>c.id===id); }
+function activeItems(){ return state.items.filter(i=>i.active); }
+function clientTotals(c){
+  let total=0,settled=0; (c.entries||[]).forEach(e=>{ total+=e.amount; if(e.status==='settled')settled+=e.amount; });
+  const paid=+c.paid||0, balance=total-paid;
+  const status=c.status||(balance<=0&&total>0?'settled':(paid>0?'partial':'pending'));
+  return {total,settled,paid,balance,status};
+}
+function statusLabel(s){ return {pending:'प्रलंबित',partial:'अंशतः',settled:'निकाली'}[s]||s; }
+
+/* ==================== NAV ==================== */
+const TABS=[{id:'home',label:'मुख्य / Home'},{id:'forms',label:'फॉर्म / Forms'},{id:'settings',label:'सेटिंग्ज / Settings'}];
+function renderTabs(){
+  const p=state.clients.filter(c=>clientTotals(c).status==='pending').length;
+  document.getElementById('tabs').innerHTML=TABS.map(t=>{
+    let dot=''; if(t.id==='home')dot=`<span class="dot" style="background:${p>0?'#ff6b5e':'#2ecc71'}"></span>`;
+    return `<button data-tab="${t.id}" class="${activeTab===t.id?'active':''}">${t.label}${dot}</button>`;
+  }).join('');
+  document.querySelectorAll('#tabs button').forEach(b=>b.onclick=()=>{activeTab=b.dataset.tab;curClientId=null;render();});
+}
+function renderAppbar(){
+  const p=state.clients.filter(c=>clientTotals(c).status==='pending').length;
+  const st=state.clients.filter(c=>clientTotals(c).status==='settled').length;
+  document.getElementById('appbarMeta').innerHTML=
+    `<div>${esc(state.settings.filerName||'—')}</div><div>${esc(state.settings.officeName||'')}</div><div>${todayReadable()}</div>`;
+  document.getElementById('appbarSub').textContent=
+    `${activeItems().length} कंप्लायन्स items · ${state.clients.length} clients · ${p} pending · ${st} settled`;
+}
+function render(){
+  renderTabs(); renderAppbar();
+  const m=document.getElementById('main');
+  const body = curClientId? vClientEditor(curClientId)
+    : activeTab==='home'? vHome()
+    : activeTab==='forms'? vForms()
+    : activeTab==='settings'? vSettings() : '';
+  m.innerHTML=body;
+  if(curClientId) bindClientEditor(curClientId);
+  else if(activeTab==='home') bindHome();
+  else if(activeTab==='forms') bindForms();
+  else if(activeTab==='settings') bindSettings();
+}
+function val(id){ const e=document.getElementById(id); return e?e.value:''; }
+
+/* ==================== HOME ==================== */
+let homeSearch='';
+function vHome(){
+  const q=homeSearch.trim().toLowerCase();
+  const list=state.clients.filter(c=>!q||c.name.toLowerCase().includes(q)||(c.caseNo||'').toLowerCase().includes(q));
+  list.sort((a,b)=>(b.updatedAt||'')<(a.updatedAt||'')?-1:(b.updatedAt||'')>(a.updatedAt||'')?1:0);
+  let totP=0,totS=0,out=0; const bs={pending:0,partial:0,settled:0};
+  state.clients.forEach(c=>{const t=clientTotals(c); if(t.status==='settled'){totS+=t.total;bs.settled++;}else{totP+=t.paid;out+=t.balance>0?t.balance:0;bs[t.status==='partial'?'partial':'pending']++;}});
+
+  let h=`<div class="card">
+    <div class="grid g4">
+      <div class="stat"><div class="v">${state.clients.length}</div><div class="l">एकूण ग्राहक</div></div>
+      <div class="stat"><div class="v" style="color:var(--red)">${bs.pending+bs.partial}</div><div class="l">प्रलंबित (Pending)</div></div>
+      <div class="stat"><div class="v" style="color:var(--green)">${bs.settled}</div><div class="l">निकाली (Settled)</div></div>
+      <div class="stat"><div class="v" style="color:var(--amber)">${fmt(out)}</div><div class="l">शिल्लक / वसूल</div></div>
+    </div>
+  </div>`;
+
+  h+=`<div class="card">
+    <h2>नवीन ग्राहक (Add Client)</h2>
+    <div class="grid g4">
+      <div><label>नाव *</label><input id="nc_name"></div>
+      <div><label>अपील / केस क्र.</label><input id="nc_case"></div>
+      <div><label>दिनांक</label><input id="nc_date" type="date" value="${todayISO()}"></div>
+      <div><label>न्यायालय / कार्यालय</label><input id="nc_court"></div>
+      <div><label>ग्राहक मोबाईल</label><input id="nc_mob"></div>
+      <div><label>ग्राहक ईमेल</label><input id="nc_email"></div>
+      <div><label>वकील नाव</label><input id="nc_advname"></div>
+      <div><label>वकील मोबाईल</label><input id="nc_advmob"></div>
+    </div>
+    <div style="margin-top:12px"><button class="btn" onclick="addClient()">＋ ग्राहक जोडा</button></div>
+  </div>`;
+
+  h+=`<div class="card">
+    <div class="row" style="align-items:center;gap:10px;margin-bottom:6px">
+      <div style="flex:2"><h2 style="margin:0">ग्राहकांची यादी (${list.length})</h2></div>
+      <div class="searchbox" style="flex:1.3"><input id="hsrch" placeholder="नाव / केस शोधा…" value="${esc(homeSearch)}"></div>
+    </div>
+    ${list.length?`<table><tr><th>नाव</th><th>केस</th><th>दिनांक</th><th class="num">एकूण</th><th class="num">भरले</th><th class="num">शिल्लक</th><th>स्थिती</th><th></th></tr>
+      ${list.map(c=>{const t=clientTotals(c);return `<tr>
+        <td><b>${esc(c.name)}</b></td><td>${esc(c.caseNo||'—')}</td><td>${fmtDate(c.appDate)}</td>
+        <td class="num">${fmt(t.total)}</td><td class="num">${fmt(t.paid)}</td>
+        <td class="num ${t.balance>0?'danger':'ok'}">${fmt(t.balance<0?0:t.balance)}</td>
+        <td><span class="pill ${t.status}" onclick="setStatus('${c.id}','${t.status==='settled'?'pending':'settled'}')">${statusLabel(t.status)}</span></td>
+        <td style="white-space:nowrap">
+          <button class="btn sm ghost" onclick="openClient('${c.id}')">उघडा</button>
+          <button class="btn sm wa" onclick="whatsappClient('${c.id}')">📲</button>
+          <button class="btn sm green" onclick="printReceipt('${c.id}')">पावती</button>
+          <button class="btn sm red" onclick="delClient('${c.id}')">काढा</button>
+        </td></tr>`;}).join('')}</table>`
+      :`<div class="empty">अजून ग्राहक नाहीत. वर “नवीन ग्राहक” जोडा.</div>`}
+  </div>`;
+  return h;
+}
+function bindHome(){
+  const s=document.getElementById('hsrch'); if(s) s.addEventListener('input',()=>{homeSearch=s.value;render();});
+}
+function addClient(){
+  const name=val('nc_name'); if(!name){toast('ग्राहकाचे नाव भरा');return;}
+  const c={id:uid('c'),name,caseNo:val('nc_case'),appDate:val('nc_date')||todayISO(),court:val('nc_court'),
+    mobile:val('nc_mob'),email:val('nc_email'),advName:val('nc_advname'),advPhone:val('nc_advmob'),
+    status:'pending',note:'',entries:[],paid:0,createdAt:new Date().toISOString(),updatedAt:new Date().toISOString()};
+  state.clients.push(c); save(); toast('ग्राहक जोडला'); openClient(c.id);
+}
+function setStatus(id,st){ const c=getClient(id); if(!c)return; c.status=st; c.updatedAt=new Date().toISOString(); save(); render(); }
+function delClient(id){ if(!confirm('हा ग्राहक काढून टाकायचा?'))return; state.clients=state.clients.filter(c=>c.id!==id); save(); render(); }
+function openClient(id){ curClientId=id; render(); }
+
+/* ==================== CLIENT EDITOR (billing) ==================== */
+function vClientEditor(id){
+  const c=getClient(id); if(!c){ curClientId=null; return ''; }
+  const t=clientTotals(c), active=activeItems();
+  const rows=active.map(i=>{
+    const e=c.entries.find(x=>x.itemId===i.id);
+    const on=!!e, qty=e?e.qty:i.qty, amt=qty*i.price;
+    return `<tr>
+      <td style="width:38px"><input type="checkbox" data-avail="${i.id}" ${on?'checked':''} style="width:auto"></td>
+      <td>${esc(i.marathi)}<br><span class="muted" style="font-size:11px">${esc(i.name)}</span></td>
+      <td class="num">${fmt(i.price)}</td>
+      <td class="num"><span class="stepper"><button data-minus="${i.id}">−</button><input data-qty="${i.id}" value="${qty}"><button data-plus="${i.id}">+</button></span></td>
+      <td class="num" style="width:110px"><b data-amt="${i.id}">${fmt(amt)}</b></td>
+    </tr>`;
+  }).join('');
+
+  return `<div class="card">
+    <div class="row" style="align-items:center;justify-content:space-between;gap:8px">
+      <div style="flex:2">
+        <h2 style="margin:0">${esc(c.name)}</h2>
+        <div class="hint">${esc(c.caseNo||'')}${c.caseNo?' · ':''}${fmtDate(c.appDate)}${c.court?' · '+esc(c.court):''}${c.mobile?' · '+esc(c.mobile):''}</div>
+      </div>
+      <div style="display:flex;gap:8px;flex-wrap:wrap">
+        <button class="btn ghost sm" onclick="curClientId=null;render()">← यादी</button>
+        <button class="btn wa sm" onclick="whatsappClient('${c.id}')">📲 WhatsApp ग्राहक</button>
+        <button class="btn wa sm" onclick="whatsappAdvocate('${c.id}')">📲 WhatsApp वकील</button>
+        <button class="btn sm" onclick="shareReceiptImage('${c.id}')">📷 पावती इमेज</button>
+        <button class="btn green sm" onclick="printReceipt('${c.id}')">🖨 पावती PDF</button>
+      </div>
+    </div>
+  </div>
+
+  <div class="card">
+    <h2>ग्राहक तपशील</h2>
+    <div class="grid g4">
+      <div><label>नाव</label><input data-cf="name" value="${esc(c.name)}"></div>
+      <div><label>अपील / केस क्र.</label><input data-cf="caseNo" value="${esc(c.caseNo)}"></div>
+      <div><label>दिनांक</label><input data-cf="appDate" type="date" value="${esc(c.appDate)}"></div>
+      <div><label>न्यायालय</label><input data-cf="court" value="${esc(c.court)}"></div>
+      <div><label>ग्राहक मोबाईल</label><input data-cf="mobile" value="${esc(c.mobile)}"></div>
+      <div><label>ग्राहक ईमेल</label><input data-cf="email" value="${esc(c.email)}"></div>
+      <div><label>वकील नाव</label><input data-cf="advName" value="${esc(c.advName)}"></div>
+      <div><label>वकील मोबाईल</label><input data-cf="advPhone" value="${esc(c.advPhone)}"></div>
+      <div><label>स्थिती</label><select data-cf="status">${['pending','partial','settled'].map(s=>`<option value="${s}" ${c.status===s?'selected':''}>${statusLabel(s)}</option>`).join('')}</select></div>
+      <div><label>टीप</label><input data-cf="note" value="${esc(c.note)}"></div>
+    </div>
+  </div>
+
+  <div class="card">
+    <h2>शुल्क / बिलिंग (Billing)</h2>
+    <div class="hint">वस्तू निवडा (टिक करा) किंवा +/− ने प्रमाण बदला; रक्कम आपोआप मोजली जाते.</div>
+    <table>
+      <tr><th>निवड</th><th>वस्तू</th><th class="num">दर</th><th class="num">प्रमाण</th><th class="num">रक्कम</th></tr>
+      ${rows}
+    </table>
+    <div class="grid g3" style="margin-top:12px">
+      <div><label>जमा / भरलेली रक्कम (Paid)</label><input type="number" id="paid" value="${c.paid}" data-cf="paid"></div>
+      <div><label>एकूण (Total)</label><input id="t_total" value="${fmt(t.total)}" readonly style="background:#f4f6fb;font-weight:700"></div>
+      <div><label>शिल्लक (Balance)</label><input id="t_balance" value="${fmt(t.balance<0?0:t.balance)}" readonly style="background:#f4f6fb;font-weight:700" class="${t.balance>0?'danger':'ok'}"></div>
+    </div>
+  </div>`;
+}
+function bindClientEditor(id){
+  const c=getClient(id); if(!c)return;
+  // detail + paid field (live, no full rerender to keep focus)
+  document.querySelectorAll('#main [data-cf]').forEach(inp=>{
+    inp.addEventListener('input',()=>{
+      c[inp.dataset.cf]=inp.value; c.updatedAt=new Date().toISOString(); save();
+      if(inp.dataset.cf==='paid') updateTotals(id);
+    });
+  });
+  // checkbox avail
+  document.querySelectorAll('#main [data-avail]').forEach(chk=>chk.addEventListener('change',()=>{setAvail(id,chk.dataset.avail,chk.checked);}));
+  // stepper
+  document.querySelectorAll('#main [data-minus]').forEach(b=>b.onclick=()=>stepQty(id,b.dataset.minus,-1));
+  document.querySelectorAll('#main [data-plus]').forEach(b=>b.onclick=()=>stepQty(id,b.dataset.plus,+1));
+  document.querySelectorAll('#main [data-qty]').forEach(inp=>inp.addEventListener('input',()=>setQty(id,inp.dataset.qty,inp.value)));
+}
+function ensureEntry(cid,iid){
+  const c=getClient(cid),i=findItem(iid); if(!c||!i)return null;
+  let e=c.entries.find(x=>x.itemId===iid);
+  if(!e){ e={itemId:iid,name:i.name,marathi:i.marathi,unit:i.unit,qty:i.qty||1,price:i.price,amount:(i.qty||1)*i.price,status:'pending'}; c.entries.push(e); }
+  return e;
+}
+function setAvail(cid,iid,on){
+  const c=getClient(cid); if(!c)return;
+  const idx=c.entries.findIndex(x=>x.itemId===iid);
+  if(on&&idx<0){ ensureEntry(cid,iid); } else if(!on&&idx>=0){ c.entries.splice(idx,1); }
+  c.updatedAt=new Date().toISOString(); save(); render();
+}
+function setQty(cid,iid,v){
+  const c=getClient(cid); if(!c)return; v=Math.max(0,+v||0);
+  const e=ensureEntry(cid,iid); if(!e)return;
+  e.qty=v; e.amount=v*e.price; c.updatedAt=new Date().toISOString(); save();
+  updateTotals(cid); const amt=document.querySelector(`#main [data-amt="${iid}"]`); if(amt)amt.textContent=fmt(e.amount);
+}
+function stepQty(cid,iid,d){
+  const c=getClient(cid); if(!c)return;
+  const e=ensureEntry(cid,iid); if(!e)return;
+  const q=Math.max(0,(+e.qty||0)+d); setQty(cid,iid,q);
+  const qi=document.querySelector(`#main [data-qty="${iid}"]`); if(qi)qi.value=q;
+}
+function updateTotals(cid){
+  const c=getClient(cid); if(!c)return; const t=clientTotals(c);
+  const a=document.getElementById('t_total'); if(a)a.value=fmt(t.total);
+  const b=document.getElementById('t_balance'); if(b){ b.value=fmt(t.balance<0?0:t.balance); b.className=t.balance>0?'danger':'ok'; }
+}
+
+/* ==================== WHATSAPP ==================== */
+function waLink(phone,text){
+  const p=(phone||'').replace(/\D/g,'');
+  const url='https://wa.me/'+p+'?text='+encodeURIComponent(text);
+  window.open(url,'_blank');
+}
+function receiptMsg(c,adv){
+  const t=clientTotals(c),s=state.settings;
+  let L=[];
+  L.push('📄 *कंप्लायन्स पावती*');
+  if(adv)L.push('👨‍⚖️ *वकिलासाठी प्रत / Advocate copy*');
+  if(s.officeName)L.push('🏢 '+s.officeName);
+  L.push('👤 ग्राहक: '+c.name);
+  L.push('📌 अपील/केस: '+(c.caseNo||'-')+'   📅 '+fmtDate(c.appDate));
+  if(c.court)L.push('⚖️ '+c.court);
+  L.push('────────────────');
+  L.push('*वस्तू | प्रमाण | दर | रक्कम*');
+  (c.entries||[]).forEach((e,i)=>L.push(`${i+1}. ${e.marathi} | ${e.qty} ${e.unit} | ₹${e.price} | ₹${e.amount}`));
+  L.push('────────────────');
+  L.push('💰 *एकूण: '+fmt(t.total)+'*');
+  L.push('✅ जमा/भरले: '+fmt(t.paid)+'   ⚠️ शिल्लक: '+fmt(t.balance<0?0:t.balance));
+  L.push('📌 स्थिती: '+statusLabel(t.status));
+  L.push('');
+  L.push('— '+(s.filerName||''));
+  return L.join('\n');
+}
+function whatsappClient(id){ const c=getClient(id); if(!c)return; toast('WhatsApp उघडत आहे…'); waLink(c.mobile||'',receiptMsg(c,false)); }
+function whatsappAdvocate(id){ const c=getClient(id); if(!c)return; toast('वकिलाच्या WhatsApp उघडत आहे…'); waLink(c.advPhone||'',receiptMsg(c,true)); }
+
+/* -------- receipt image (for WhatsApp) -------- */
+function receiptImage(c){
+  const s=state.settings,t=clientTotals(c);
+  const rows=c.entries||[]; const W=820,pad=26,rowH=34,head=70,th=34,foot=130;
+  function colY(y){return y;}
+  const H=head+th+rows.length*rowH+foot;
+  const cv=document.createElement('canvas'); cv.width=W; cv.height=H;
+  const ctx=cv.getContext('2d'); ctx.fillStyle='#ffffff'; ctx.fillRect(0,0,W,H);
+  ctx.fillStyle='#000'; ctx.textBaseline='middle';
+  function textFit(str,maxW,font){
+    ctx.font=font||'13px "Nirmala UI","Mangal",sans-serif';
+    if(ctx.measureText(str).width<=maxW)return str;
+    while(str.length>1&&ctx.measureText(str+'…').width>maxW)str=str.slice(0,-1);
+    return str+'…';
+  }
+  // header
+  ctx.textAlign='center'; ctx.font='bold 20px "Nirmala UI","Mangal",sans-serif';
+  ctx.fillText(s.officeName||'COMPLIANCE RECEIPT',W/2,26);
+  ctx.font='bold 15px "Nirmala UI","Mangal",sans-serif';
+  ctx.fillText('कंप्लायन्स पावती / COMPLIANCE RECEIPT',W/2,52);
+  ctx.strokeStyle='#000'; ctx.beginPath(); ctx.moveTo(pad,66); ctx.lineTo(W-pad,66); ctx.stroke();
+  // client block
+  ctx.textAlign='left'; ctx.font='13px "Nirmala UI","Mangal",sans-serif';
+  ctx.fillText('ग्राहक: '+c.name,pad,84);
+  ctx.fillText('अपील/केस: '+(c.caseNo||'-')+'   दिनांक: '+fmtDate(c.appDate),pad,104);
+  // table header
+  let y=head; const xSr=pad,xIt=pad+60,xQty=W-340,xRate=W-230,xAmt=W-120;
+  ctx.font='bold 12px "Nirmala UI","Mangal",sans-serif';
+  ctx.fillText('अ.क्र.',xSr,y); ctx.fillText('वस्तू',xIt,y);
+  ctx.textAlign='right'; ctx.fillText('प्रमाण',xQty,y); ctx.fillText('दर',xRate,y); ctx.fillText('रक्कम',xAmt,y);
+  y+=rowH; ctx.strokeStyle='#ccc'; ctx.beginPath(); ctx.moveTo(pad,y-8); ctx.lineTo(W-pad,y-8); ctx.stroke();
+  // rows
+  ctx.font='13px "Nirmala UI","Mangal",sans-serif'; ctx.textAlign='left';
+  rows.forEach((e,i)=>{
+    ctx.fillText(String(i+1),xSr,y);
+    ctx.fillText(textFit(e.marathi||e.name,300),xIt,y);
+    ctx.textAlign='right'; ctx.fillText(e.qty+' '+e.unit,xQty,y); ctx.fillText('₹'+e.price,xRate,y); ctx.fillText('₹'+e.amount,xAmt,y);
+    ctx.textAlign='left'; y+=rowH;
+  });
+  // totals
+  ctx.strokeStyle='#000'; ctx.beginPath(); ctx.moveTo(pad,y-8); ctx.lineTo(W-pad,y-8); ctx.stroke();
+  ctx.textAlign='right'; ctx.font='bold 14px "Nirmala UI","Mangal",sans-serif';
+  ctx.fillText('एकूण: '+fmt(t.total),xAmt,y);
+  ctx.font='13px "Nirmala UI","Mangal",sans-serif'; y+=rowH;
+  ctx.fillText('जमा: '+fmt(t.paid),xAmt,y); y+=rowH;
+  ctx.fillText('शिल्लक: '+fmt(t.balance<0?0:t.balance),xAmt,y); y+=rowH;
+  ctx.fillText('स्थिती: '+statusLabel(t.status),xAmt,y);
+  // signature
+  ctx.textAlign='center'; ctx.font='12px "Nirmala UI","Mangal",sans-serif';
+  ctx.fillText(s.filerName||'सही',W-140,y+18); ctx.fillText('(फिलर / Agent)',W-140,y+34);
+  ctx.fillText('Generated '+todayReadable(),W/2,H-24);
+  return cv.toDataURL('image/png');
+}
+async function shareReceiptImage(id){
+  const c=getClient(id); if(!c)return;
+  try{
+    const url=receiptImage(c);
+    const blob=await (await fetch(url)).blob();
+    const file=new File([blob],'receipt_'+Date.now()+'.png',{type:'image/png'});
+    if(navigator.canShare&&navigator.canShare({files:[file]})){ await navigator.share({files:[file],title:'Compliance Receipt',text:receiptMsg(c,false)}); toast('शेअर झाले'); }
+    else{ downloadData(url,'receipt.png','image/png'); toast('इमेज डाउनलोड झाली — WhatsApp मध्ये पाठवा'); }
+  }catch(e){ try{ downloadData(receiptImage(c),'receipt.png','image/png'); toast('इमेज डाउनलोड झाली'); }catch(e2){ toast('इमेज तयार झाली नाही'); } }
+}
+function downloadData(data,name,mime){
+  const a=document.createElement('a');
+  if(data.startsWith('data:'))a.href=data; else a.href=URL.createObjectURL(new Blob([data],{type:mime||'application/octet-stream'}));
+  a.download=name; document.body.appendChild(a); a.click(); a.remove();
+}
+
+/* ==================== RECEIPT PRINT ==================== */
+function printReceipt(id){
+  const c=getClient(id); if(!c){toast('ग्राहक निवडा');return;}
+  const s=state.settings,t=clientTotals(c);
+  const label=statusLabel(t.status);
+  const rows=(c.entries||[]).map((e,i)=>`<tr><td>${i+1}</td><td>${esc(e.marathi)}<br><span style="font-size:11px;color:#555">${esc(e.name)}</span></td><td class="num">${e.qty} ${esc(e.unit)}</td><td class="num">${fmt(e.price)}</td><td class="num">${fmt(e.amount)}</td></tr>`).join('');
+  const html=`<div class="preceipt">
+    <div style="text-align:center;border-bottom:2px solid #000;padding-bottom:9px;margin-bottom:6px">
+      <div style="font-size:19px;font-weight:700">${esc(s.officeName||'')}</div>
+      <div style="font-size:12px">${esc(s.address||'')}</div>
+      <div style="font-size:13px;font-weight:700;margin-top:5px">कंप्लायन्स पावती / COMPLIANCE RECEIPT</div>
+    </div>
+    <table style="width:100%;border:none;font-size:12.5px;margin-bottom:8px">
+      <tr><td style="border:none">ग्राहक: <b>${esc(c.name)}</b>${c.mobile?' · '+esc(c.mobile):''}</td><td style="border:none;text-align:right">दिनांक: ${fmtDate(c.appDate)}</td></tr>
+      <tr><td style="border:none">अपील/केस: ${esc(c.caseNo||'—')}</td><td style="border:none;text-align:right">पावती क्र.: <b>${esc(c.id.slice(-6).toUpperCase())}</b></td></tr>
+      <tr><td style="border:none">न्यायालय: ${esc(c.court||'—')}</td><td style="border:none;text-align:right">वकील: ${esc(c.advName||'—')}</td></tr>
+    </table>
+    <table><tr><th>अ.क्र.</th><th>वस्तू</th><th class="num">प्रमाण</th><th class="num">दर</th><th class="num">रक्कम</th></tr>
+      ${rows||`<tr><td colspan="5" style="text-align:center;color:#555">— वस्तू निवडल्या नाहीत —</td></tr>`}
+      <tr><td colspan="3" style="text-align:right;font-weight:700">एकूण / TOTAL</td><td class="num" style="font-weight:700">${fmt(t.total)}</td></tr>
+      <tr><td colspan="3" style="text-align:right">जमा / Paid</td><td class="num">${fmt(t.paid)}</td></tr>
+      <tr><td colspan="3" style="text-align:right;font-weight:700">शिल्लक / Balance</td><td class="num"><b>${fmt(t.balance<0?0:t.balance)}</b></td></tr>
+      <tr><td colspan="3" style="text-align:right;font-weight:700">स्थिती</td><td class="num" style="font-weight:700">${label}</td></tr>
+    </table>
+    <div style="margin-top:56px;display:flex;justify-content:space-between">
+      <div style="font-size:12px;color:#555">(सही)</div>
+      <div style="text-align:center"><div>${esc(s.filerName||'')}</div><div style="font-size:11px;color:#555">फिलर / Agent</div></div>
+    </div>
+    <div style="margin-top:14px;font-size:11px;color:#555;border-top:1px solid #ccc;padding-top:6px">Generated ${todayReadable()}</div>
+  </div>`;
+  printHTML(html);
+}
+function printHTML(html){ const a=document.getElementById('printArea'); a.innerHTML=html; window.print(); }
+
+/* ==================== FORMS ==================== */
+const CHHANI_POINTS=[
+  ['परिपूर्ण अपील मेमोसमवेत सादर केलेल्या कागदपत्रांची यादी-अनुक्रमणिका व सर्व कागदपत्रांना पानांकन केले आहे काय ?'],
+  ['अर्जदार/अपीलकार यांनी त्यांचा ईमेल आयडी व मोबाईल क्रमांक ई-कोर्ट फॉर्म दिला आहे काय ?'],
+  ['अर्ज/अपील/पुनरीक्षण/पुनर्विलोकन अर्ज कोणत्या कायद्यांतर्गत व कलमांतर्गत दाखल केले याचा उल्लेख आहे काय ?'],
+  ['त्या निकालाविरुद्ध अर्ज/अपील/पुनरीक्षण/पुनर्विलोकन अर्ज आहे त्यातील सर्व प्रकारांचा समावेश आहे का ?'],
+  ['अर्ज/अपील/पुनरीक्षण/पुनर्विलोकन अर्जाच्या तळाला जोडपत्र नमुना दोन मधील नमुन्यात सत्यापन करण्यात आलेले आहे काय ?'],
+  ['गैरअर्जदार/जाबदार/उत्तरवादी यांना देण्यासाठी अर्जाच्या/अपील मेमोच्या प्रती सोबत दाखल केलेल्या आहेत काय ?'],
+  ['कुळमुखत्यारी यांनी दाखल केलेल्या अर्ज/अपीलासोबत मूळ कुळमुखत्यारपत्राची प्रत दाखल केली आहे काय ?'],
+  ['अर्ज/अपील मेमोवर महाराष्ट्र कोर्ट फी अधिनियमाच्या कलम 5 सह कलम 36 सह अनुसूची 2 प्रमाणे योग्य कोर्ट फी लावले आहेत काय ?'],
+  ['अर्ज/अपील/पुनरीक्षण/पुनर्विलोकन अर्जासमवेत जोडपत्र-तीन मधील नमुन्यात शपथपत्र जोडले आहे काय ?'],
+  ['प्रकरणातील अंतर्निहित आदेशाची प्रमाणित प्रत तसेच अन्य निम्नस्तरीय महसूल अधिकाऱ्यांनी निर्णय पारित केले असल्यास त्या आदेशांच्या प्रमाणित प्रती सादर केलेल्या आहेत काय ?'],
+  ['वादिमुळकती संबंधित अत्यंत अधिकार अभिलेख पत्रक (7/12), फेरफार नोंद, मालमत्ता पत्रक, मोजणी नकाशा यांच्या वाचनीय प्रती तसेच जोडपत्र-चार मधील नमुन्यात फेरफारांचा कालक्रमानुसार तपशील सादर केला आहे काय ?'],
+  ['अर्ज/अपील/पुनरीक्षण/पुनर्विलोकन अर्ज मुदतीत आहे का ?'],
+  ['अर्ज/अपील/पुनरीक्षण/पुनर्विलोकन अर्ज, मुदतीत नसल्यास विलंबमाफीचा पृथक अर्ज सादर केला आहे काय ?'],
+  ['स्थगिती आदेशासाठी पृथक अर्ज केला आहे का ? (आवश्यकतेप्रमाणे)'],
+  ['जाबदार/उत्तरवादी यांना सुनावणीची नोटीस व अर्ज/अपील मेमोची प्रत डाकेने पाठवण्यासाठी योग्य आकाराचा लिफाफा व टपाल खर्च (टपाल मुद्रांक) दिलेले आहेत काय ?'],
+  ['सर्व प्रकारचे खरे पत्ते दिलेले आहेत काय ?']
+];
+function ensureFormData(key){ if(!state.formData[key])state.formData[key]={}; return state.formData[key]; }
+function vForms(){
+  const opts=state.clients.map(c=>`<option value="${c.id}">${esc(c.name)}${c.caseNo?' ('+esc(c.caseNo)+')':''}</option>`).join('');
+  if(!formClient||(formClient!=='draft'&&!getClient(formClient)))formClient=state.clients[0]?state.clients[0].id:'draft';
+  const data=ensureFormData(formClient);
+  const forms=[['chhani','छाननी पत्रक'],['jp2','जोडपत्र-२'],['jp3','जोडपत्र-३'],['jp4','जोडपत्र-४']];
+  return `<div class="card">
+    <h2>अधिकृत फॉर्म (fillable)</h2>
+    <div class="hint">रिकाम्या (अधोरेखित) जागा भरा; छापा / Save PDF; WhatsApp द्वारे पाठवा.</div>
+    <div class="row">
+      <div style="flex:2"><label>ग्राहक</label><select id="ffClient">${state.clients.length?opts:'<option value="draft">— Draft —</option>'}</select></div>
+      <div><label>कार्यालय</label><input id="ffOffice" value="${esc(state.settings.officeName||'')}"></div>
+      <div><label>जिल्हा</label><input id="ffDistrict" value="${esc(state.settings.district||'')}"></div>
+    </div>
+  </div>
+  <div class="card">
+    <div style="display:flex;gap:8px;flex-wrap:wrap;align-items:center;margin-bottom:12px">
+      ${forms.map(([k,l])=>`<button class="btn ${curForm===k?'':'ghost'} sm" data-f="${k}">${l}</button>`).join('')}
+      <span style="flex:1"></span>
+      <button class="btn green sm" onclick="printCurrentForm()">🖨 छापा / PDF</button>
+      <button class="btn wa sm" onclick="whatsappForm()">📲 WhatsApp</button>
+      <button class="btn ghost sm" onclick="resetCurrentForm()">रिकामे</button>
+    </div>
+    <div id="formBody">${formHTML(curForm,data)}</div>
+  </div>`;
+}
+function formHTML(key,data){
+  if(key==='chhani')return formChhani(data);
+  if(key==='jp2')return formJp2(data);
+  if(key==='jp3')return formJp3(data);
+  if(key==='jp4')return formJp4(data);
+  return '';
+}
+function headBlock(data,idx,ttl){
+  const d=data.meta||{};
+  return `<div class="dochead">
+    <div class="t1">जोडपत्र - ${idx}</div>
+    <div class="t2">${ttl||''}</div>
+    <div class="t3">
+      अर्ज/केस क्र.:<input class="fill w20" data-meta="caseNo" value="${esc(d.caseNo||'')}">
+      दिनांक:<input class="fill w15" data-meta="date" value="${esc(d.date||'')}">
+      अर्जदार:<input class="fill w40" data-meta="applicant" value="${esc(d.applicant||'')}">
+    </div>
+  </div>`;
+}
+function formChhani(data){
+  data.points=data.points||[];
+  const rows=CHHANI_POINTS.map((p,i)=>{const r=data.points[i]||{};
+    return `<li>${esc(p[0])}
+      <span class="yn">
+        <label><input type="radio" name="ch_${i+1}" value="yes" data-rad="yes" data-i="${i}" ${r.yes?'checked':''}> होय</label>
+        <label><input type="radio" name="ch_${i+1}" value="no" data-rad="no" data-i="${i}" ${r.no?'checked':''}> नाही</label>
+        <label><input type="radio" name="ch_${i+1}" value="na" data-rad="na" data-i="${i}" ${r.na?'checked':''}> लागू नाही</label>
+      </span>
+      <div><input class="fill w90" data-remark="${i}" value="${esc(r.remark||'')}" style="margin-top:3px" placeholder="टीप"></div></li>`;}).join('');
+  return `<div class="formdoc">${headBlock(data,'एक','छाननी पत्रक')}<ol>${rows}</ol></div>`;
+}
+function formJp2(data){
+  data.v=data.v||{}; const v=data.v;
+  return `<div class="formdoc">${headBlock(data,'दोन','सत्यापन नमुना')}
+    <div class="para" style="margin-top:8px">मी (<input class="fill w75" data-v="name" value="${esc(v.name||'')}" placeholder="पूर्ण नाव, वय, पत्ता">)</div>
+    <div class="para" style="margin-top:10px">मी यापुढे जाहीर करतो की, उपरोक्त अर्ज / अपील स्थापन यामध्ये नमूद केलेले तथ्ये, वस्तुस्थिती अथवा माहिती ही माझ्या समजुतीप्रमाणे खरी व बरोबर आहे. उपरोक्त अर्ज / अपील स्थापन, यामध्ये नमूद केलेली कोणतेही तथ्ये, वस्तुस्थिती अथवा माहिती लपवण्यात आलेली नाही अथवा दाबून टाकलेली नाही. मला जाणीव आहे की, या कार्यवाहीच्या कोणत्याही टप्प्यावर मी उद्देशपूर्वक खोटा पुरावा देणार नाही/ दिलेला नाही किंवा खोटा पुरावा रचणार नाही. मी कोणतेही अधिकथन खोटे आहे अथवा खोटे असल्याचे मला स्वतःला माहित असूनही अथवा तसे खोटे असल्याचे मी स्वतः समजतो किंवा खरे आहे असे मी स्वतः समजत नाही, असे अधिकथन मी करणार नाही अथवा केलेली नाही. तसेच या कार्यवाहीत पीठासीन असलेल्या लोकसेवकाचा उद्देशपूर्वक अपमान करणार नाही किंवा त्यांच्या कामात व्यत्यय आणणार नाही. मला जाणीव आहे की, उपरोक्त बाबींचा भंग झाल्यास भारतीय न्याय संहिता, 2023 ची कलमे 229, 230 व 267 अख्येय होणाऱ्या शिक्षेस पात्र राहीन.</div>
+    <div class="sigrow">
+      <div class="blk"><div>ठिकाण: <input class="fill w60" data-v="place" value="${esc(v.place||'')}"></div>
+        <div style="margin-top:12px">दिनांक: <input class="fill w60" data-v="date" value="${esc(v.date||'')}"></div></div>
+      <div class="blk" style="text-align:center"><div><b>स्वाक्षरी</b></div><div style="height:34px"></div>
+        <div style="border-bottom:1px solid #333"><input class="nodim" data-v="signname" placeholder="सत्यापन करणाऱ्याचे नाव" value="${esc(v.signname||'')}"></div>
+        <div style="margin-top:16px;border-bottom:1px solid #333"><input class="nodim" data-v="lawyer" placeholder="वकिलाचे नाव व स्वाक्षरी" value="${esc(v.lawyer||'')}"></div></div>
+    </div></div>`;
+}
+function formJp3(data){
+  data.v=data.v||{}; const v=data.v;
+  const items=[
+    'मी या प्रकरणातील अर्जदार / अपीलकार अथवा प्राधिकृत प्रतिनिधी असून अर्ज / अपील स्थापनामधील सर्व तथ्ये, कथने अथवा वस्तुस्थिती याबाबत मला पूर्ण माहिती आहे.',
+    `सोबत जोडलेल्या अर्जातील / अपील स्थापनातील, परिच्छेद <input class="fill w12" data-v="p1a" value="${esc(v.p1a||'')}"> ते <input class="fill w12" data-v="p1b" value="${esc(v.p1b||'')}"> मधील वस्तुस्थिती, तथ्ये व कथने हे माझ्या माहितीप्रमाणे व वैयक्तिक ज्ञानाप्रमाणे, खरे व बरोबर आहेत.`,
+    `सोबत जोडलेल्या अर्जातील / अपील स्थापनातील, परिच्छेद <input class="fill w12" data-v="p2a" value="${esc(v.p2a||'')}"> ते <input class="fill w12" data-v="p2b" value="${esc(v.p2b||'')}"> मधील वस्तुस्थिती, तथ्ये व कथने हे माझ्या ताब्यात असलेल्या कागदपत्रांवरून खरे असल्याबाबत माझी खात्री झालेली आहे.`,
+    'अर्ज / अपील स्थापनातील, वस्तुस्थिती, तथ्ये व कथने यांच्याशी संबंधित सर्व अभिलेख मी उघड केलेले आहेत व सोबत जोडलेले आहेत. याशिवाय माझ्याकडे कोणतीही कागदपत्रे/अभिलेख जे अर्ज / अपीलावर परिणाम करू शकतील असे नाहीत.',
+    'अर्ज / अपील स्थापन यामध्ये नमूद केलेले तथ्ये, वस्तुस्थिती अथवा माहिती ही माझ्या समजुतीप्रमाणे खरी व बरोबर आहे. उपरोक्त अर्ज / अपील स्थापन, यामध्ये नमूद केलेली कोणतेही तथ्ये, वस्तुस्थिती अथवा माहिती लपवण्यात आलेली नाही अथवा दाबून टाकलेली नाही. मला जाणीव आहे की, या कार्यवाहीच्या कोणत्याही टप्प्यावर मी उद्देशपूर्वक खोटा पुरावा देणार नाही/ दिलेला नाही किंवा खोटा पुरावा रचणार नाही. मी कोणतेही अधिकथन खोटे आहे अथवा खोटे असल्याचे मला स्वतःला माहित असूनही अथवा तसे खोटे असल्याचे मी स्वतः समजतो किंवा खरे आहे असे मी स्वतः समजत नाही, असे अधिकथन मी करणार नाही अथवा केलेली नाही. तसेच या कार्यवाहीत पीठासीन असलेल्या लोकसेवकाचा उद्देशपूर्वक अपमान करणार नाही किंवा त्यांच्या कामात व्यत्यय आणणार नाही.',
+    'मी या शपथपत्राद्वारे हमी देतो की, इलेक्ट्रॉनिक माध्यमाद्वारे केलेला पत्रव्यवहार/ पाठवलेली नोटीस, ही वैधरित्या मला करण्यात आलेला पत्रव्यवहार/नोटीस बजावणी झाली असल्याचे समजेल.',
+    'अर्ज/अपीलासमवेत वादिमुळकतीशी संदर्भातील हस्तांतरणाचा / व्यवहारांचा / फेरफारांचा तपशील जोडपत्र-चार मधील नमुन्यात कालक्रमानुसार नमूद करण्यात आलेला आहे व तो बरोबर व खरा आहे.',
+    'अर्ज/अपीलासमवेत सर्व आवश्यक अभिलेख तसेच फेरफारांच्या प्रमाणित व वाचनीय प्रती सादर करण्यात आलेल्या आहेत.',
+    'जाबदार/उत्तरवादी यांना नोटीस बजावण्यासाठी आवश्यक ते डाकेचे पाकीट व डाक मुद्रांकासह सोबत जोडलेले आहे.',
+    'अर्ज/अपील स्थापनामध्ये नमूद करण्यात आलेले, अर्जदार/जाबदार/उत्तरवादी/ अपीलकार यांचे पत्ते हे खरे व बरोबर असल्याची मी खात्री केलेली आहे.',
+    `प्रस्तुत प्रकरणात, उपरोक्त काम माझ्यावतीने पाहण्यासाठी विधिज्ञ श्री. <input class="fill w45" data-v="lawyer" value="${esc(v.lawyer||'')}"> यांना प्राधिकृत करण्यात आलेले आहे. त्याबाबतचे वकीलपत्र/प्राधिकारपत्र सोबत जोडलेले आहे.`,
+    'या न्यायपीठाशिवाय अन्य महसूल न्यायपीठाकडे / मा.दिवाणी न्यायालयाकडे /अन्य अर्धन्यायिक प्राधिकाऱ्याकडे / मा.उच्च न्यायालयामध्ये कोणताही अर्ज /अपील /रिट याचिका / विशेष अनुमती याचिका प्रलंबित नाही. प्रलंबित असल्यास त्याचा तपशील नमूद करावा.'
+  ].map(t=>`<li>${t}</li>`).join('');
+  return `<div class="formdoc">${headBlock(data,'तीन','अर्ज / अपील स्थापनासमवेतचे शपथपत्र')}
+    <div class="para" style="margin-top:6px">मी (<input class="fill w75" data-v="name" value="${esc(v.name||'')}" placeholder="पूर्ण नाव, वय व पत्ता">) दृढपूर्वक खालीलप्रमाणे कथन करतो की,</div>
+    <ol style="margin-top:8px">${items}</ol>
+    <div class="para" style="margin-top:8px"><b>१३.</b> संपर्कासाठी माझा व माझ्या विधिज्ञांचा दूरध्वनी क्रमांक व ईमेल आयडी खालीलप्रमाणे आहे.</div>
+    <table class="filltbl" style="margin-top:6px"><tr><th style="width:30%"></th><th>१. अर्जदार</th><th>२. विधिज्ञ</th></tr>
+      <tr><td>दूरध्वनी</td><td><input class="fill" data-v="ph_a" value="${esc(v.ph_a||'')}"></td><td><input class="fill" data-v="ph_l" value="${esc(v.ph_l||'')}"></td></tr>
+      <tr><td>ईमेल</td><td><input class="fill" data-v="em_a" value="${esc(v.em_a||'')}"></td><td><input class="fill" data-v="em_l" value="${esc(v.em_l||'')}"></td></tr></table>
+    <div class="para" style="margin-top:10px">श्री. <input class="fill w60" data-v="officer" value="${esc(v.officer||'')}"> यांनी माझ्यासमोर उपरोक्त शपथपत्र स्वाक्षरीकृत केलेले आहे.</div>
+    <div class="sigrow">
+      <div class="blk" style="text-align:center"><div><b>स्वाक्षरी (शपथकर्ता)</b></div><div style="height:34px"></div>
+        <div style="border-bottom:1px solid #333"><input class="nodim" data-v="signname" placeholder="अर्जदाराचे नाव" value="${esc(v.signname||'')}"></div></div>
+      <div class="blk" style="text-align:center"><div><b>कार्यकारी दंडाधिकारी / नोटरी</b></div><div style="height:34px"></div>
+        <div style="border-bottom:1px solid #333"><input class="nodim" data-v="notary" placeholder="Name/signature" value="${esc(v.notary||'')}"></div></div>
+    </div></div>`;
+}
+function formJp4(data){
+  const rows=(data.rows&&data.rows.length)?data.rows:[{}];
+  const rh=(r,i)=>`<tr><td><input class="fill" data-rw="sr" data-i="${i}" value="${esc(r.sr||'')}"></td>
+    <td><input class="fill" data-rw="no" data-i="${i}" value="${esc(r.no||'')}"></td>
+    <td><input class="fill" data-rw="dt" data-i="${i}" value="${esc(r.dt||'')}"></td>
+    <td><input class="fill" data-rw="detail" data-i="${i}" value="${esc(r.detail||'')}"></td>
+    <td style="width:30px;text-align:center"><button class="btn xs red" data-rw="del" data-i="${i}">×</button></td></tr>`;
+  return `<div class="formdoc">${headBlock(data,'चार','फेरफार क्रमांक व प्रमाणन दिनांक / फेरफाराचा तपशील')}
+    <table class="filltbl" style="margin-top:8px"><thead><tr><th style="width:6%">अ.क्र.</th><th style="width:14%">फेरफार क्र.</th><th style="width:16%">दिनांक</th><th>तपशील</th><th></th></tr></thead>
+      <tbody id="jp4body">${rows.map(rh).join('')}</tbody></table>
+    <button class="btn sm" onclick="addJp4Row()" style="margin-top:8px">＋ पंक्ती</button>
+    <div class="para" style="margin-top:14px;font-size:12px">शेरा: <input class="fill w60" data-meta="note" value="${esc((data.meta&&data.meta.note)||'')}"></div></div>`;
+}
+function addJp4Row(){ const d=ensureFormData(formClient); d.rows=d.rows||[]; d.rows.push({}); save(); render(); }
+function bindForms(){
+  const sel=document.getElementById('ffClient'); if(sel)sel.addEventListener('change',()=>{formClient=sel.value;render();});
+  const off=document.getElementById('ffOffice'); if(off)off.addEventListener('input',()=>{state.settings.officeName=off.value;save();});
+  const dist=document.getElementById('ffDistrict'); if(dist)dist.addEventListener('input',()=>{state.settings.district=dist.value;save();});
+  document.querySelectorAll('#main [data-f]').forEach(b=>b.onclick=()=>{curForm=b.dataset.f;render();});
+  const body=document.getElementById('formBody'); if(!body)return;
+  const data=ensureFormData(formClient);
+  const bind=(sel2,fn)=>body.querySelectorAll(sel2).forEach(inp=>inp.addEventListener('input',()=>{fn(inp);save();}));
+  bind('[data-meta]',i=>{data.meta=data.meta||{};data.meta[i.dataset.meta]=i.value;});
+  bind('[data-remark]',i=>{data.points=data.points||[];data.points[+i.dataset.remark]=data.points[+i.dataset.remark]||{};data.points[+i.dataset.remark].remark=i.value;});
+  bind('[data-v]',i=>{data.v=data.v||{};data.v[i.dataset.v]=i.value;});
+  bind('[data-rw]',i=>{ if(i.dataset.rw==='del')return; data.rows=data.rows||[]; data.rows[+i.dataset.i]=data.rows[+i.dataset.i]||{}; data.rows[+i.dataset.i][i.dataset.rw]=i.value; });
+  body.querySelectorAll('[data-rad]').forEach(r=>r.addEventListener('change',()=>{ const i=+r.dataset.i; data.points=data.points||[]; data.points[i]=data.points[i]||{}; const rec=data.points[i];
+    rec.yes=r.value==='yes'&&r.checked; rec.no=r.value==='no'&&r.checked; rec.na=r.value==='na'&&r.checked; save(); }));
+  body.querySelectorAll('[data-rw="del"]').forEach(b=>b.onclick=()=>{ const d=ensureFormData(formClient); d.rows.splice(+b.dataset.i,1); save(); render(); });
+}
+function printCurrentForm(){ const data=ensureFormData(formClient); const c=formClient!=='draft'?getClient(formClient):null;
+  printHTML(formHTML(curForm,data)+`<div style="margin-top:14px;font-size:11px;color:#444;border-top:1px solid #aaa;padding-top:6px">${state.settings.officeName||''} · ${c?(c.name+' · '+c.caseNo):''} · ${todayReadable()}</div>`); }
+function resetCurrentForm(){ if(!confirm('हे फॉर्म रिकामे करायचे?'))return; state.formData[formClient][curForm]={}; save(); render(); toast('फॉर्म रिकामा झाला'); }
+function whatsappForm(){
+  const c=formClient!=='draft'?getClient(formClient):null;
+  const ttl={chhani:'छाननी पत्रक',jp2:'जोडपत्र-२ (सत्यापन)',jp3:'जोडपत्र-३ (शपथपत्र)',jp4:'जोडपत्र-४ (फेरफार)'}[curForm];
+  let L=[ '📄 *'+ttl+'*','👤 ग्राहक: '+(c?c.name:'—'),'📌 केस: '+((c&&c.caseNo)||'—'),'📅 '+((c&&fmtDate(c.appDate))||''),
+    '','भरलेला फॉर्म खाली तपासा / छापा.','— '+(state.settings.filerName||'') ];
+  const phone=(c&&(c.advPhone||c.mobile))||'';
+  toast('WhatsApp उघडत आहे…'); waLink(phone,L.join('\n'));
+}
+
+/* ==================== SETTINGS ==================== */
+function vSettings(){
+  const s=state.settings;
+  const items=state.items.slice().sort((a,b)=>a.cat.localeCompare(b.cat)||a.marathi.localeCompare(b.marathi));
+  return `<div class="card"><h2>कार्यालय / प्रयोक्ता (Settings)</h2>
+    <div class="grid g4">
+      <div><label>कार्यालयाचे नाव</label><input id="st_office" value="${esc(s.officeName)}"></div>
+      <div><label>फिलर / एजंट</label><input id="st_filer" value="${esc(s.filerName)}"></div>
+      <div><label>पत्ता</label><input id="st_addr" value="${esc(s.address)}"></div>
+      <div><label>तालुका</label><input id="st_tal" value="${esc(s.taluka)}"></div>
+      <div><label>जिल्हा</label><input id="st_dist" value="${esc(s.district)}"></div>
+      <div><label>फोन</label><input id="st_phone" value="${esc(s.phone)}"></div>
+      <div><label>चलन</label><input id="st_cur" value="${esc(s.currency)}"></div>
+    </div></div>
+
+  <div class="card"><h2>कंप्लायन्स यादी — दर / प्रमाण (Settings)</h2>
+    <div class="hint">वस्तू जोडा / काढा / दर व प्रमाण बदला. हे बदल पावती आणि फॉर्मवर लागू होतात.</div>
+    <div class="grid g4" style="margin-bottom:12px">
+      <div><label>मराठी नाव</label><input id="ni_mar"></div>
+      <div><label>नाव (English)</label><input id="ni_name"></div>
+      <div><label>श्रेणी</label><input id="ni_cat" placeholder="जोडपत्र / टपाल / शुल्क"></div>
+      <div><label>एकक</label><input id="ni_unit" placeholder="नग / प्रत / सेट"></div>
+      <div><label>दर (₹)</label><input id="ni_price" type="number" min="0"></div>
+      <div><label>प्रमाण</label><input id="ni_qty" type="number" min="1" value="1"></div>
+    </div>
+    <button class="btn" onclick="addItem()">＋ वस्तू जोडा</button>
+  </div>
+
+  <div class="card"><h2>चालू यादी (${state.items.length})</h2>
+    <table><tr><th>Active</th><th>वस्तू</th><th>श्रेणी</th><th class="num">एकक</th><th class="num">दर</th><th class="num">प्रमाण</th><th></th></tr>
+    ${items.map(i=>`<tr>
+      <td><input type="checkbox" data-it-on="${i.id}" ${i.active?'checked':''} style="width:auto"></td>
+      <td><b>${esc(i.marathi)}</b><br><span class="muted" style="font-size:11px">${esc(i.name)}</span></td>
+      <td>${esc(i.cat)}</td>
+      <td class="num"><input data-it-u="${i.id}" value="${esc(i.unit)}" style="width:64px"></td>
+      <td class="num"><input type="number" data-it-p="${i.id}" value="${i.price}" style="width:82px"></td>
+      <td class="num"><input type="number" data-it-q="${i.id}" value="${i.qty}" style="width:70px"></td>
+      <td><button class="btn sm red" onclick="delItem('${i.id}')">काढा</button></td></tr>`).join('')}</table>
+  </div>
+
+  <div class="card"><h2>डेटा बॅकअप / रिस्टोर (Backup)</h2>
+    <div class="hint">तुमच्या रेकॉर्डची सुरक्षित प्रत — JSON, CSV (Excel साठी), किंवा PDF (Save-as-PDF).</div>
+    <div class="row">
+      <div><button class="btn green" onclick="exportJson()">⬇ JSON बॅकअप</button></div>
+      <div><button class="btn green" onclick="exportCSV()">⬇ CSV (Excel)</button></div>
+      <div><button class="btn green" onclick="printReport()">⬇ PDF रिपोर्ट</button></div>
+      <div><button class="btn ghost" onclick="document.getElementById('impFile').click()">⬆ आयात करा</button>
+        <input type="file" id="impFile" accept="application/json" style="display:none" onchange="importJson(event)"></div>
+      <div><button class="btn red" onclick="resetAll()">सर्व पुसा</button></div>
+    </div>
+    <div class="hint2" style="margin-top:8px">PDF मिळवण्यासाठी “PDF रिपोर्ट”→“प्रिंट डायलॉगमध्ये Save as PDF” निवडा.</div>
+  </div>
+
+  <div class="card"><h2>मदत / Help</h2>
+    <div class="hint2" style="line-height:1.7">
+      • <b>मुख्य:</b> ग्राहक जोडा → उघडा → वस्तू टिक/+− करा → रक्कम आपोआप.<br>
+      • <b>WhatsApp:</b> ग्राहक/वकिलाला पावतीची मजकूर रकीत व इमेज (मोबाईलवर Native Share) पाठवा.<br>
+      • <b>संग्रह:</b> सर्व डेटा या डिव्हाइसवर राहतो; दुसऱ्या संगणकावर न्यायचा असेल तर JSON/CSV बॅकअप घ्या.<br>
+      • A4 छपाई — प्रिंट डायलॉगमधून “Save as PDF”.
+    </div></div>`;
+}
+function bindSettings(){
+  [['st_office','officeName'],['st_filer','filerName'],['st_addr','address'],['st_tal','taluka'],['st_dist','district'],['st_phone','phone'],['st_cur','currency']].forEach(([id,k])=>{const el=document.getElementById(id); if(el)el.addEventListener('input',()=>{state.settings[k]=el.value;save();});});
+  state.items.forEach(i=>{
+    const on=document.querySelector(`#main [data-it-on="${i.id}"]`),u=document.querySelector(`#main [data-it-u="${i.id}"]`),
+      p=document.querySelector(`#main [data-it-p="${i.id}"]`),q=document.querySelector(`#main [data-it-q="${i.id}"]`);
+    if(on)on.addEventListener('change',()=>{i.active=on.checked;save();toast(on.checked?'सक्रिय':'निष्क्रिय');});
+    if(u)u.addEventListener('input',()=>{i.unit=u.value;save();});
+    if(p)p.addEventListener('input',()=>{i.price=+p.value||0;save();});
+    if(q)q.addEventListener('input',()=>{i.qty=Math.max(0,+q.value||0);save();});
+  });
+}
+function addItem(){ const mar=val('ni_mar'); if(!mar){toast('मराठी नाव भरा');return;}
+  state.items.push({id:uid('i'),cat:val('ni_cat')||'इतर',name:val('ni_name')||mar,marathi:mar,unit:val('ni_unit')||'नग',price:+val('ni_price')||0,qty:+val('ni_qty')||1,active:true});
+  save(); render(); toast('वस्तू जोडली'); }
+function delItem(id){ if(!confirm('ही वस्तू काढायची?'))return; state.items=state.items.filter(i=>i.id!==id); save(); render(); }
+
+/* -------- backup export -------- */
+function exportJson(){ downloadData(JSON.stringify(state,null,2),'revenue_backup_'+todayISO()+'.json','application/json'); toast('JSON बॅकअप घेतला'); }
+function exportCSV(){
+  let rows=[['Client','Case No','Date','Court','Mobile','Advocate','Item','Qty','Unit','Rate','Amount','Paid','Balance','Status']];
+  state.clients.forEach(c=>{const t=clientTotals(c);
+    if(!c.entries.length)rows.push([c.name,c.caseNo,c.appDate,c.court,c.mobile,c.advName,'','','','','',t.paid,t.balance,t.status]);
+    c.entries.forEach(e=>rows.push([c.name,c.caseNo,c.appDate,c.court,c.mobile,c.advName,e.marathi,e.qty,e.unit,e.price,e.amount,t.paid,t.balance,t.status]));
+  });
+  const csv=rows.map(r=>r.map(x=>'"'+String(x==null?'':x).replace(/"/g,'""')+'"').join(',')).join('\n');
+  downloadData('\uFEFF'+csv,'revenue_backup_'+todayISO()+'.csv','text/csv;charset=utf-8'); toast('CSV (Excel) बॅकअप घेतला');
+}
+function printReport(){
+  const ttl=state.settings.officeName||'कंप्लायन्स रिपोर्ट';
+  const rows=state.clients.map(c=>{const t=clientTotals(c);
+    const items=(c.entries||[]).map(e=>`${e.marathi} ${e.qty}×₹${e.price}=₹${e.amount}`).join('<br>')||'—';
+    return `<tr><td>${esc(c.name)}</td><td>${esc(c.caseNo||'—')}</td><td>${fmtDate(c.appDate)}</td><td>${items}</td>
+      <td class="num">${fmt(t.total)}</td><td class="num">${fmt(t.paid)}</td><td class="num">${fmt(t.balance<0?0:t.balance)}</td><td>${statusLabel(t.status)}</td></tr>`;}).join('');
+  const html=`<div class="preceipt">
+    <div style="text-align:center;border-bottom:2px solid #000;padding-bottom:8px;margin-bottom:10px">
+      <div style="font-size:20px;font-weight:700">${esc(ttl)}</div>
+      <div style="font-size:13px">राजस्व अपील दाखल कंप्लायन्स रिपोर्ट · Generated ${todayReadable()}</div>
+      <div style="font-size:12px;margin-top:4px">ग्राहक: ${state.clients.length} · फिलर: ${esc(state.settings.filerName||'—')}</div>
+    </div>
+    <table><tr><th>ग्राहक</th><th>केस</th><th>दिनांक</th><th>वस्तू</th><th class="num">एकूण</th><th class="num">भरले</th><th class="num">शिल्लक</th><th>स्थिती</th></tr>
+      ${rows||'<tr><td colspan="8" class="empty">अजून ग्राहक नाहीत.</td></tr>'}</table>
+  </div>`;
+  printHTML(html); toast('प्रिंट डायलॉगमध्ये Save as PDF निवडा');
+}
+function importJson(ev){
+  const f=ev.target.files[0]; if(!f)return; const r=new FileReader();
+  r.onload=()=>{ try{ const s=JSON.parse(r.result); if(!s.clients||!s.items)throw 1;
+    state=Object.assign(defaultState(),s); state.settings=Object.assign(defaultState().settings,s.settings||{}); save(); render(); toast('डेटा आयात झाला'); }
+    catch(e){ toast('अवैध बॅकअप फाईल'); } };
+  r.readAsText(f);
+}
+function resetAll(){ if(!confirm('सर्व डेटा पुसून नवीन सुरू करायचा? हे परत करता येणार नाही.'))return; state=defaultState(); save(); curClientId=null; activeTab='home'; render(); toast('सर्व डेटा पुसला'); }
+
+/* boot */
+document.addEventListener('DOMContentLoaded',()=>{ render(); });
+</script>
+</body>
+</html>
